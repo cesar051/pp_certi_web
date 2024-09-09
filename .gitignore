@@ -1,0 +1,32 @@
+# Ignorar archivos de entorno
+.env
+
+# Dependencias de Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Directorio de salida de compilación
+dist/
+build/
+
+# Cache de npm
+.npm/
+
+# Archivos de lock
+package-lock.json
+yarn.lock
+
+# Directorios de IDE
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Otros archivos
+*.bak
