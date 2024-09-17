@@ -1,6 +1,5 @@
-require('dotenv').config({ path: './../.env' })
 const mssql = require('mssql');
-console.log(process.env.DB_PORT)
+
 const options = {
     user: process.env.DB_USER_NAME,
     password: process.env.DB_PASSWORD,
@@ -12,7 +11,7 @@ const options = {
 function getConnection() {
     return mssql.connect(options)
         .then(pool => {
-            console.log('Conexión a MSSQL exitosa');
+            //console.log('Conexión a MSSQL exitosa');
             return pool;  // Devuelve el objeto de conexión (pool)
         })
         .catch(err => {
