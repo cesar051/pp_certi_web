@@ -2,56 +2,62 @@ const getTokenFromHeader = require("./getTokenFromHeader");
 const { verifyAccessToken } = require("./verifyToken");
 const dbDefaultQuery = require('../db/dbDefaultQuery')
 const sql = require('mssql');
+const SQLScripts = require("../db/SQLScripts");
+const { ERROR_MESSAGES } = require("../constants");
 
 function isAdmin(req, res, next) {
 
     const checkAdmin = (user) => {
 
         console.log("llegaUser");
-        console.log(user.user.userId);
+        console.log(user.userId);
 
-        const SQLscriptGetUserPerfil = `SELECT perfil FROM wa_usuarios WHERE id= @userId
-        `;//SQLScripts.scriptVerifyUserPassword
+        const SQLscriptGetUserPerfil = SQLScripts.scriptGetPerfilOfUser;//SQLScripts.scriptVerifyUserPassword
         const queryInputs = [
             {
                 name: 'userId',
                 type: sql.Int,
-                value: user.user.userId
+                value: user.userId
             }
         ]
 
         function checkAdminCallBack(response) {
+            console.log("llega a check");
+            console.log(response);
+
             if (response && response.recordset) {
                 console.log(response)
                 if (response.recordset[0].perfil === '1') {
                     next();
                 } else {
-                    res.status(401).send('unauthorized');
+                    console.log("lo saca");
+                    return res.status(401).json(ERROR_MESSAGES['unauthorized']);
                 }
             } else {
-                res.status(500).send('Error al realizar la consulta.');
+                return res.status(500).json(ERROR_MESSAGES['error interno']);
             }
         }
 
         dbDefaultQuery.dbDefaultQuery(SQLscriptGetUserPerfil, queryInputs, checkAdminCallBack, res);
     }
 
-    console.log("autenticando")
+    console.log("autenticando admin")
     const token = getTokenFromHeader(req.headers);
     if (token) {
         const decoded = verifyAccessToken(token);
+        console.log(decoded);
+
         if (decoded) {
-            console.log("decodificado: " + decoded)
+
             user = decoded.user
             req.user = user;
-            console.log("duardado " + req.user)
+
             checkAdmin(user)
-            //next();
         } else {
-            res.status(401).send('unauthorized');
+            return res.status(401).send(ERROR_MESSAGES['unauthorized']);
         }
     } else {
-        res.status(401).send('no token provided');
+        return res.status(401).send(ERROR_MESSAGES['no token provided']);
     }
 }
 

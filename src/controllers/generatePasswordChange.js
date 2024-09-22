@@ -1,14 +1,9 @@
-const { sqli, getConnection } = require('../db/dbConnection')
-const jwt = require('jsonwebtoken')
 const SQLScripts = require('../db/SQLScripts')
-const stringValidator = require('../objects/stringValidator')
 const sql = require('mssql');
 const dbDefaultQuery = require('../db/dbDefaultQuery')
-const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { generateOTP, hashOTP, createOTPExpirationDate } = require('../objects/OTPManager');
-
-//require('dotenv').config({ path: './../.env' })
+const { ERROR_MESSAGES } = require('../constants');
 
 module.exports.generatePasswordChange = (req, res) => {
 
@@ -49,7 +44,7 @@ module.exports.generatePasswordChange = (req, res) => {
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log('Error al enviar el correo electrónico:', error);
-                res.status(400).json({ statusCode: 400, message: "error" })
+                return res.status(400).json(ERROR_MESSAGES['error interno'])
             } else {
                 console.log('Correo electrónico enviado:', info.response);
                 res.json({ statusCode: 200, message: "success" })
@@ -89,7 +84,7 @@ module.exports.generatePasswordChange = (req, res) => {
                 console.log(response)
                 sendMailWithOTP(intOTP)
             } else {
-                res.status(500).send('Error al realizar la consulta.');
+                return res.status(500).json(ERROR_MESSAGES['error interno']);
             }
         }
 
@@ -98,7 +93,7 @@ module.exports.generatePasswordChange = (req, res) => {
     }
 
     function getEmailId() {
-        
+
         const SQLscriptGetIdRElatedToEmail = SQLScripts.scriptGetIdRelatedToEmail //SQLScripts.scriptGetUserBasicInfo;//SQLScripts.scriptVerifyUserPassword
         const queryInputs = [
             {
@@ -122,7 +117,7 @@ module.exports.generatePasswordChange = (req, res) => {
                     res.json({ statusCode: 200, message: "success" })
                 }
             } else {
-                res.status(500).send('Error al realizar la consulta.');
+                return res.status(500).json(ERROR_MESSAGES['error interno']);
             }
         }
 

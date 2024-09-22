@@ -1,3 +1,4 @@
+const { ERROR_MESSAGES } = require("../constants");
 const getTokenFromHeader = require("./getTokenFromHeader");
 const { verifyAccessToken } = require("./verifyToken");
 
@@ -7,16 +8,16 @@ function authenticate(req, res, next) {
     if (token) {
         const decoded = verifyAccessToken(token);
         if (decoded) {
-            console.log("decodificado: " + decoded)
+
             user = decoded.user
             req.user = user;
-            console.log("duardado " + req.user)
+
             next();
         } else {
-            res.status(401).send('unauthorized');
+            return res.status(401).json(ERROR_MESSAGES['unauthorized']);
         }
     } else {
-        res.status(401).send('no token provided');
+        return res.status(401).json(ERROR_MESSAGES['no token provided']);
     }
 }
 

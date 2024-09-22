@@ -1,9 +1,8 @@
-const { sqli, getConnection } = require('../db/dbConnection')
-const jwt = require('jsonwebtoken')
 const SQLScripts = require('../db/SQLScripts')
 const stringValidator = require('../objects/stringValidator')
 const sql = require('mssql');
-const dbDefaultQuery = require('../db/dbDefaultQuery')
+const dbDefaultQuery = require('../db/dbDefaultQuery');
+const { ERROR_MESSAGES } = require('../constants');
 
 module.exports.userSignUp = (req, res) => {
     const name = req.body.name
@@ -21,7 +20,7 @@ module.exports.userSignUp = (req, res) => {
         if (result) {
             res.json({ statusCode: 200, message: "success", dataInsertedId: result.recordset })
         } else {
-            res.status(500).send('Error al realizar la consulta.');
+            return res.status(500).json(ERROR_MESSAGES['error interno']);
         }
     }
 
@@ -65,7 +64,7 @@ module.exports.userSignUp = (req, res) => {
                 createNewUser();
             }
         } else {
-            res.status(500).send('Error al realizar la consulta.');
+            return res.status(500).json(ERROR_MESSAGES['error interno']);
         }
 
     }
@@ -87,6 +86,6 @@ module.exports.userSignUp = (req, res) => {
     }
     else {
         console.log("este")
-        res.json({ statusCode: 400, message: "wrong user/password" })
+        return res.status(400).json(ERROR_MESSAGES['Bad Request'])
     }
 }

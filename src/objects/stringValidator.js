@@ -25,6 +25,13 @@ const loginValidator = {
             // Elimina la última aparición de la subcadena
             return cadena.substring(0, indice) + cadena.substring(indice + subcadena.length);
         }
+    },
+    stringIsNumericOrNumber: (str) => {
+        const num = Number(str);
+        return (!isNaN(num) && num !== Infinity && num !== -Infinity) || typeof str === 'number';
+    },
+    isString: (value) => {
+        return typeof value === 'string';
     }
 };
 
