@@ -13,6 +13,7 @@ const { generatePasswordChange } = require('../controllers/generatePasswordChang
 const { changePassword } = require('../controllers/changePassword')
 const { updateUserState } = require('../controllers/updateUserState')
 const { getFilteredUsers } = require('../controllers/getFilteredUsers')
+const { uploadDataIVA } = require('../controllers/uploadDataIVA')
 
 router.get('/userLogin', userLogin);
 
@@ -24,6 +25,7 @@ router.post('/changePassword', changePassword);
 router.post('/getUsers', isAdmin, getUsers);
 router.post('/updateUserState', isAdmin, updateUserState);
 router.post('/getFilteredUsers', isAdmin, getFilteredUsers);
+router.post('/uploadDataIVA', isAdmin, uploadDataIVA);
 
 router.delete('/signOut', signOut);
 

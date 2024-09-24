@@ -3,6 +3,7 @@ const stringValidator = require('../objects/stringValidator')
 const sql = require('mssql');
 const dbDefaultQuery = require('../db/dbDefaultQuery');
 const { ERROR_MESSAGES } = require('../constants');
+const { sendMail } = require('../objects/customMailer');
 
 module.exports.userSignUp = (req, res) => {
     const name = req.body.name
@@ -18,7 +19,17 @@ module.exports.userSignUp = (req, res) => {
     function callBackFunctionCreateUser(result) {
         console.log(result)
         if (result) {
-            res.json({ statusCode: 200, message: "success", dataInsertedId: result.recordset })
+            sendMail(process.env.ADMIN_EMAIL_ADDRESS,
+                "Registro nuevo usuario",
+                `Nuevo usuario registrado:  
+nombre: ${name}
+email: ${email} 
+nit: ${nit}  `, () => {
+                return res.json({ statusCode: 200, message: "success", dataInsertedId: result.recordset })
+            }, () => {
+                return res.status(500).json(ERROR_MESSAGES['error interno']);
+            });
+
         } else {
             return res.status(500).json(ERROR_MESSAGES['error interno']);
         }
