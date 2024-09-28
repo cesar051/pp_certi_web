@@ -1,14 +1,10 @@
-const { sqli, getConnection } = require('../db/dbConnection')
-const jwt = require('jsonwebtoken')
 const SQLScripts = require('../db/SQLScripts')
-const stringValidator = require('../objects/stringValidator')
 const sql = require('mssql');
 const dbDefaultQuery = require('../db/dbDefaultQuery');
 const getTokenFromHeader = require('../auth/getTokenFromHeader');
 const { verifyRefreshToken } = require('../auth/verifyToken');
 const { generateAccessToken } = require('../auth/generateTokens');
-
-require('dotenv').config({ path: './../.env' })
+const { ERROR_MESSAGES } = require('../constants');
 
 module.exports.refreshToken = (req, res) => {
 
@@ -21,15 +17,17 @@ module.exports.refreshToken = (req, res) => {
 
             const payload = verifyRefreshToken(refreshToken)
             if (payload) {
-                //console.log(payload);
+                console.log("new token ");
 
-                const accessToken = generateAccessToken(payload)
+                console.log(payload);
+
+                const accessToken = generateAccessToken(payload.user)
                 return res.json({ statusCode: 200, message: "accede", accessToken: accessToken })
             } else {
-                res.status(401).send('unauthorized');
+                return res.status(401).json(ERROR_MESSAGES['unauthorized']);
             }
         } else {
-            res.status(401).send('unauthorized');
+            res.status(401).json(ERROR_MESSAGES['unauthorized']);
         }
     }
 
@@ -44,6 +42,6 @@ module.exports.refreshToken = (req, res) => {
         const extraCallBackParams = {}
         dbDefaultQuery.dbDefaultQuery(SQLGetTokenFromDB, queryInputs, callBackGetToken, res, extraCallBackParams);
     } else {
-        res.status(401).send('unauthorized');
+        return res.status(401).json(ERROR_MESSAGES['unauthorized']);
     }
 }

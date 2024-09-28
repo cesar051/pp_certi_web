@@ -1,15 +1,11 @@
-const { sqli, getConnection } = require('../db/dbConnection')
-const jwt = require('jsonwebtoken')
 const SQLScripts = require('../db/SQLScripts')
-const stringValidator = require('../objects/stringValidator')
 const sql = require('mssql');
-const dbDefaultQuery = require('../db/dbDefaultQuery')
-
-require('dotenv').config({ path: './../.env' })
+const dbDefaultQuery = require('../db/dbDefaultQuery');
+const { ERROR_MESSAGES } = require('../constants');
 
 module.exports.getBasicUserInfo = (req, res) => {
 
-    const userId = req.user.user.userId
+    const userId = req.user.userId
     console.log("entrando basic info " + userId)
     const SQLscriptGetUserBasicInfo = SQLScripts.scriptGetUserBasicInfo;//SQLScripts.scriptVerifyUserPassword
     const queryInputs = [
@@ -25,7 +21,7 @@ module.exports.getBasicUserInfo = (req, res) => {
             console.log(response);
             res.json({ statusCode: 200, message: "success", data: response.recordsets })
         } else {
-            res.status(500).send('Error al realizar la consulta.');
+            return res.status(500).json(ERROR_MESSAGES['error interno']);
         }
     }
 

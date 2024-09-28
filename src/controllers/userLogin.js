@@ -1,12 +1,9 @@
-const { sqli, getConnection } = require('../db/dbConnection')
-const jwt = require('jsonwebtoken')
 const SQLScripts = require('../db/SQLScripts')
 const stringValidator = require('../objects/stringValidator')
 const sql = require('mssql');
 const dbDefaultQuery = require('../db/dbDefaultQuery')
-const { generateAccessToken, generateRefreshToken } = require('../auth/generateTokens')
-
-require('dotenv').config({ path: './../.env' })
+const { generateAccessToken, generateRefreshToken } = require('../auth/generateTokens');
+const { ERROR_MESSAGES } = require('../constants');
 
 module.exports.userLogin = (req, res) => {
 
@@ -21,7 +18,7 @@ module.exports.userLogin = (req, res) => {
             getUserId()
         }
         else {
-            res.json({ statusCode: 400, message: "wrong user/password" })
+            return res.status(400).json(ERROR_MESSAGES['Bad Request'])
         }
     }
 
@@ -37,7 +34,7 @@ module.exports.userLogin = (req, res) => {
                 result.recordset[0].perfil)
 
         } else {
-            res.json({ statusCode: 400, message: "wrong user/password" })
+            return res.status(400).json(ERROR_MESSAGES['wrong user/password'])
         }
     }
 
@@ -73,7 +70,7 @@ module.exports.userLogin = (req, res) => {
                 perfil: extraCallBackParams.perfil,
             })
         } else {
-            res.json({ statusCode: 400, message: "wrong user/password" })
+            return res.status(400).json(ERROR_MESSAGES['wrong user/password'])
         }
     }
 

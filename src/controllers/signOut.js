@@ -1,12 +1,8 @@
-const { sqli, getConnection } = require('../db/dbConnection')
-const jwt = require('jsonwebtoken')
 const SQLScripts = require('../db/SQLScripts')
-const stringValidator = require('../objects/stringValidator')
 const sql = require('mssql');
 const dbDefaultQuery = require('../db/dbDefaultQuery')
 const getTokenFromHeader = require('../auth/getTokenFromHeader');
-
-require('dotenv').config({ path: './../.env' })
+const { ERROR_MESSAGES } = require('../constants');
 
 module.exports.signOut = (req, res) => {
 
@@ -25,7 +21,7 @@ module.exports.signOut = (req, res) => {
         if (response && response.recordsets) {
             res.json({ statusCode: 200, message: "success", data: response.recordsets })
         } else {
-            res.status(500).send('Error al realizar la consulta.');
+            return res.status(500).json(ERROR_MESSAGES['error interno']);
         }
     }
 

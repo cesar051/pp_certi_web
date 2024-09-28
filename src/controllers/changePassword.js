@@ -1,12 +1,8 @@
-const { sqli, getConnection } = require('../db/dbConnection')
-const jwt = require('jsonwebtoken')
 const SQLScripts = require('../db/SQLScripts')
-const stringValidator = require('../objects/stringValidator')
 const sql = require('mssql');
 const dbDefaultQuery = require('../db/dbDefaultQuery');
 const { checkOTPValid, deleteOTP, verifyOPTEqualsHashOPT, increaseOTPTries } = require('../objects/OTPManager');
-
-require('dotenv').config({ path: './../.env' })
+const { ERROR_MESSAGES } = require('../constants');
 
 module.exports.changePassword = (req, res) => {
 
@@ -47,7 +43,7 @@ module.exports.changePassword = (req, res) => {
                 deleteOTP(OPTInfo, responseOnsuccess, res)
 
             } else {
-                res.status(500).send('Error al realizar la consulta.');
+                return res.status(500).json(ERROR_MESSAGES['error interno']);
             }
         }
 
@@ -82,7 +78,7 @@ module.exports.changePassword = (req, res) => {
                         console.log("no concuerda incrementando");
                         console.log(response.recordset[0]);
                         function responseOnsuccess(response) {
-                            res.json({ statusCode: 400, message: "invalid code" })
+                            return res.json(ERROR_MESSAGES['invalid code'])
                         }
                         increaseOTPTries(response.recordset[0], responseOnsuccess, res)
                     }
@@ -91,7 +87,7 @@ module.exports.changePassword = (req, res) => {
                     console.log("opt no valido borrando");
                     console.log(response.recordset[0]);
                     function responseOnsuccess(response) {
-                        res.status(500).send('Error al realizar la consulta.');
+                        return res.status(500).json(ERROR_MESSAGES['error interno']);
                     }
                     //getOTPinfo()
                     deleteOTP(response.recordset[0], responseOnsuccess, res)
@@ -99,7 +95,7 @@ module.exports.changePassword = (req, res) => {
                 }
 
             } else {
-                res.status(500).send('Error al realizar la consulta.');
+                return res.status(500).json(ERROR_MESSAGES['error interno']);
             }
         }
 

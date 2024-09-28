@@ -34,5 +34,16 @@ module.exports = {
             OFFSET @initial_offset ROWS 
             FETCH NEXT @quantity_per_page ROWS ONLY;
         `,
-    scriptGetTotalNumberOfUsers: "SELECT COUNT(*) AS cantidad_usuarios FROM wa_usuarios;"
+    scriptGetTotalNumberOfUsers: "SELECT COUNT(*) AS cantidad_usuarios FROM wa_usuarios;",
+    scriptUpdateUserState: "UPDATE wa_usuarios SET estado = @newUserState WHERE id = @userIdToUpdate;",
+    scriptGetUsersWithPaginationFiltered: `
+            SELECT id, nit, nombres, correo, celular, estado
+            FROM wa_usuarios
+            WHERE estado = @user_state
+            ORDER BY id 
+            OFFSET @initial_offset ROWS 
+            FETCH NEXT @quantity_per_page ROWS ONLY ;
+        `,
+    scriptGetTotalNumberOfUsersFiltered: "SELECT COUNT(*) AS cantidad_usuarios FROM wa_usuarios WHERE estado = @user_state;",
+    scriptGetPerfilOfUser: `SELECT perfil FROM wa_usuarios WHERE id= @userId`
 }
