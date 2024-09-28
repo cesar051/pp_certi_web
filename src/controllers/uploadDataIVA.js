@@ -40,9 +40,6 @@ module.exports.uploadDataIVA = (req, res) => {
                 name: 'base', type: sql.Numeric(14, 2), nullable: { nullable: false }
             },
             {
-                name: 'valor_concepto', type: sql.Numeric(14, 2), nullable: { nullable: false }
-            },
-            {
                 name: 'retenido', type: sql.Numeric(14, 2), nullable: { nullable: false }
             },
             {
@@ -76,19 +73,18 @@ module.exports.uploadDataIVA = (req, res) => {
             item.id_empresa,
             item.nit,
             String(item.cuenta),
-            item.nombre,
+            item.descripcion,
             item.concepto,
             item.porcentaje,
             item.base,
-            item.iva,
             item.retenido,
-            item['año'],
+            item.year,
             item.periodo,
             item.ciudad_pago,
             item.ciudad_expedido,
             item.banco_pago,
-            item.ind_iva,
-            item['fecha-expedicion'],
+            item.indicador_impuesto,
+            item.fecha_expedicion,
             currentDate // Pasar la fecha actual como `fecha_creacion`
         ])
 

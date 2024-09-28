@@ -56,7 +56,7 @@ const requiredColumnsUploadIVA = {
         type: "VARCHAR",
         length: 60
     },
-    "nombre": {
+    "descripcion": {
         null: true,
         type: "VARCHAR",
         length: 300
@@ -76,17 +76,12 @@ const requiredColumnsUploadIVA = {
         type: "NUMERIC",
         length: [14, 2]
     },
-    "iva": {
-        null: false,
-        type: "NUMERIC",
-        length: [14, 2]
-    },
     "retenido": {
         null: false,
         type: "NUMERIC",
         length: [14, 2]
     },
-    "año": {
+    "year": {
         null: false,
         type: "NUMERIC",
         length: [4, 0]
@@ -111,12 +106,12 @@ const requiredColumnsUploadIVA = {
         type: "NUMERIC",
         length: [6, 0]
     },
-    "ind_iva": {
+    "indicador_impuesto": {
         null: true,
         type: "NUMERIC",
         length: [6, 0]
     },
-    "fecha-expedicion": {
+    "fecha_expedicion": {
         null: true,
         type: "DATE",
         length: 0
