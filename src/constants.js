@@ -69,7 +69,7 @@ const requiredColumnsUploadIVA = {
     "porcentaje": {
         null: false,
         type: "NUMERIC",
-        length: [3, 0]
+        length: [5, 2]
     },
     "base": {
         null: false,
