@@ -71,7 +71,7 @@ module.exports.uploadDataIVA = (req, res) => {
         const currentDate = getCurrentDateForSQL()
         const rowsToInsert = jsonData.map(item => [
             item.id_empresa,
-            item.nit,
+            String(item.nit),
             String(item.cuenta),
             item.descripcion,
             item.concepto,
