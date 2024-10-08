@@ -1,5 +1,5 @@
 module.exports = {
-    scriptVerifyUserPassword: "SELECT id, nit, nombres, correo, celular, perfil FROM wa_usuarios WHERE correo = @correo and clave = @clave",
+    scriptVerifyUserPassword: "SELECT id, nit, nombres, correo, celular, perfil, clave FROM wa_usuarios WHERE correo = @correo and estado = 'A'",
     scriptVerifyMailNotRegistered: "SELECT id FROM wa_usuarios WHERE correo = @correo",
     scriptInsertNewUser: "INSERT INTO wa_usuarios (nit, nombres, correo, celular, fecha_creacion, estado, perfil, clave) OUTPUT INSERTED.id VALUES (@nit, @nombre, @correo, @celular, GETDATE(), 'I', '0', @clave);",
     scriptGetUserBasicInfo: "select id, nit, nombres, correo, celular, perfil from wa_usuarios where id = @userId ;",

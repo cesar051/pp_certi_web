@@ -4,6 +4,14 @@ const loginValidator = {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     },
+    validatePassword: (passwordString) => {
+        // Validar la contraseña
+        const passwordRegex = /^[A-Za-z\d\W]{8,}$/;
+        if (!passwordRegex.test(passwordString)) {
+            return false;
+        }
+        return true
+    },
     validateLength: (string, min, max) => {
         return string.length >= min && string.length <= max
     },
