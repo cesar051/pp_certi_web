@@ -4,6 +4,8 @@ const sql = require('mssql');
 const dbDefaultQuery = require('../db/dbDefaultQuery')
 const { generateAccessToken, generateRefreshToken } = require('../auth/generateTokens');
 const { ERROR_MESSAGES } = require('../constants');
+const argon2 = require('argon2');
+const { hashPassword, comparePassword } = require('../objects/passwordManager');
 
 module.exports.userLogin = (req, res) => {
 
@@ -14,7 +16,10 @@ module.exports.userLogin = (req, res) => {
     const SQLUploadRefreshToken = SQLScripts.scriptInsertRefreshToken;
 
     function validateParams(email, pass) {
-        if (email && pass && stringValidator.validateMail(email) && stringValidator.validateLength(pass, 1, 80) && stringValidator.validateSpecialChars(pass)) {
+        if (email && pass &&
+            stringValidator.validateMail(email) &&
+            stringValidator.validateLength(pass, 1, 80) &&
+            stringValidator.validatePassword(pass)) {
             getUserId()
         }
         else {
@@ -23,7 +28,6 @@ module.exports.userLogin = (req, res) => {
     }
 
     function callBackFunctionGetUserId(result) {
-        console.log(result.recordset);
 
         if (result && result.recordset && result.recordset.length > 0) {
             JWTSignUser(result.recordset[0].id,
@@ -38,20 +42,36 @@ module.exports.userLogin = (req, res) => {
         }
     }
 
+    function callBackVerifyCorrectPassword(result) {
+
+        if (result && result.recordset && result.recordset.length > 0) {
+
+            comparePassword(pass, result.recordset[0].clave, (err, isMatch) => {
+                if (err) {
+                    return res.status(500).json(ERROR_MESSAGES['error interno']);
+                }
+                if (isMatch) {
+                    delete result.recordset[0].clave;
+                    callBackFunctionGetUserId(result);
+                } else {
+                    return res.status(400).json(ERROR_MESSAGES['wrong user/password'])
+                }
+            });
+
+        } else {
+            return res.status(400).json(ERROR_MESSAGES['wrong user/password'])
+        }
+    }
+
     function getUserId() {
         const queryInputs = [
             {
                 name: 'correo',
                 type: sql.VarChar,
                 value: email
-            },
-            {
-                name: 'clave',
-                type: sql.VarChar,
-                value: pass
             }
         ]
-        dbDefaultQuery.dbDefaultQuery(consulta, queryInputs, callBackFunctionGetUserId, res);
+        dbDefaultQuery.dbDefaultQuery(consulta, queryInputs, callBackVerifyCorrectPassword, res);
 
     }
 
@@ -99,6 +119,5 @@ module.exports.userLogin = (req, res) => {
         }
         dbDefaultQuery.dbDefaultQuery(SQLUploadRefreshToken, queryInputs, callBackUploadRefreshTokenToDB, res, extraCallBackParams);
     }
-
-    getUserId()
+    validateParams(email, pass);
 }

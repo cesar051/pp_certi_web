@@ -27,7 +27,7 @@ module.exports.generatePasswordChange = (req, res) => {
 
         transporter.verify((err, success) => {
             if (err) console.error(err);
-            console.log('Your config is correct');
+
         });
 
         //console.log(transporter.options.host);
@@ -79,9 +79,8 @@ module.exports.generatePasswordChange = (req, res) => {
         ]
 
         function callBackFunctionInsertOPT(response) {
-            console.log(response)
+
             if (response) {
-                console.log(response)
                 sendMailWithOTP(intOTP)
             } else {
                 return res.status(500).json(ERROR_MESSAGES['error interno']);
@@ -102,18 +101,15 @@ module.exports.generatePasswordChange = (req, res) => {
                 value: email
             },
         ]
-        console.log(SQLscriptGetIdRElatedToEmail, email)
+
         function callBackFunctionGetUsers(response) {
             if (response && response.recordset) {
-                console.log(response);
-                //console.log(response.recordset[0].id);
+
                 if (response.recordset.length === 1) {
-                    console.log("todo copas")
+
                     uploadOTP(response.recordset[0].id)
-                    //res.json({ statusCode: 200, message: "success" })
 
                 } else {
-                    console.log("error encontrando usuario")
                     res.json({ statusCode: 200, message: "success" })
                 }
             } else {

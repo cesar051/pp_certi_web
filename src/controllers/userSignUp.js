@@ -4,10 +4,10 @@ const sql = require('mssql');
 const dbDefaultQuery = require('../db/dbDefaultQuery');
 const { ERROR_MESSAGES } = require('../constants');
 const { sendMail } = require('../objects/customMailer');
+const { hashPassword } = require('../objects/passwordManager');
 
 module.exports.userSignUp = (req, res) => {
     const name = req.body.name
-    const fechaNacimiento = req.body.fechaNacimiento
     const email = req.body.email
     const nit = req.body.nit
     const numero = req.body.numero
@@ -17,7 +17,6 @@ module.exports.userSignUp = (req, res) => {
     const SQLInsertNewUser = SQLScripts.scriptInsertNewUser;
 
     function callBackFunctionCreateUser(result) {
-        console.log(result)
         if (result) {
             sendMail(process.env.ADMIN_EMAIL_ADDRESS,
                 "Registro nuevo usuario",
@@ -35,11 +34,11 @@ nit: ${nit}  `, () => {
         }
     }
 
-    function createNewUser() {
+    function createNewUser(hashedPassword) {
         const queryInputs = [
             {
                 name: 'nit',
-                type: sql.Int,
+                type: sql.VarChar,
                 value: nit
             },
             {
@@ -60,19 +59,26 @@ nit: ${nit}  `, () => {
             {
                 name: 'clave',
                 type: sql.VarChar,
-                value: password
+                value: hashedPassword
             }
         ]
         dbDefaultQuery.dbDefaultQuery(SQLInsertNewUser, queryInputs, callBackFunctionCreateUser, res);
     }
 
     function callBackFunctionAlreadyNotExistEmail(result) {
-        console.log(result)
+
         if (result && result.recordset) {
             if (result.recordset.length > 0) {
                 res.json({ statusCode: 400, message: "mail already exist" })
             } else {
-                createNewUser();
+                hashPassword(password, (err, hashedPassword) => {
+                    if (err) {
+                        return res.status(500).json(ERROR_MESSAGES['error interno']);
+                    }
+                    createNewUser(hashedPassword);
+
+                });
+                //createNewUser();
             }
         } else {
             return res.status(500).json(ERROR_MESSAGES['error interno']);
@@ -91,12 +97,14 @@ nit: ${nit}  `, () => {
         dbDefaultQuery.dbDefaultQuery(SQLConsultaCheckEmailNotExist, queryInputs, callBackFunctionAlreadyNotExistEmail, res);
     }
 
-    if (stringValidator.validateMail(email) && stringValidator.validateLength(password, 8, 80) && stringValidator.validateLength(name, 1, 100) &&
-        stringValidator.validateLength(nit, 9, 9)) {
+    if (stringValidator.validateMail(email) &&
+        stringValidator.validateLength(password, 8, 80) &&
+        stringValidator.validatePassword(password) &&
+        stringValidator.validateLength(name, 1, 100) &&
+        stringValidator.validateLength(nit, 4, 50)) {
         alreadyNotExistMail(email)
     }
     else {
-        console.log("este")
         return res.status(400).json(ERROR_MESSAGES['Bad Request'])
     }
 }
