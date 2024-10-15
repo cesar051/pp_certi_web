@@ -36,6 +36,7 @@ module.exports = {
         `,
     scriptGetTotalNumberOfUsers: "SELECT COUNT(*) AS cantidad_usuarios FROM wa_usuarios;",
     scriptUpdateUserState: "UPDATE wa_usuarios SET estado = @newUserState WHERE id = @userIdToUpdate;",
+    scriptUpdateUserMail: "UPDATE wa_usuarios SET correo = @newUserMail WHERE id = @userIdToUpdate;",
     scriptGetUsersWithPaginationFiltered: `
             SELECT id, nit, nombres, correo, celular, estado
             FROM wa_usuarios

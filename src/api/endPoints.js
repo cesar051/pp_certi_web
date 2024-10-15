@@ -15,6 +15,7 @@ const { updateUserState } = require('../controllers/updateUserState')
 const { getFilteredUsers } = require('../controllers/getFilteredUsers')
 const { uploadDataIVA } = require('../controllers/uploadDataIVA')
 const { getCertificateInfo } = require('../controllers/getCertificateInfo')
+const { updateUserMail } = require('../controllers/updateUserMail')
 
 router.get('/userLogin', userLogin);
 
@@ -25,6 +26,7 @@ router.post('/generatePasswordChange', generatePasswordChange);
 router.post('/changePassword', changePassword);
 router.post('/getUsers', isAdmin, getUsers);
 router.post('/updateUserState', isAdmin, updateUserState);
+router.post('/updateUserMail', isAdmin, updateUserMail);
 router.post('/getFilteredUsers', isAdmin, getFilteredUsers);
 router.post('/uploadDataIVA', isAdmin, uploadDataIVA);
 router.post('/getCertificateInfo', authenticate, getCertificateInfo);
