@@ -21,9 +21,7 @@ module.exports.getCertificateInfo = (req, res) => {
     const conceptoBD = valuesDBConcepto[concepto];
 
     console.log("entrando basic info " + userId)
-    const SQLscriptGetUserBasicInfo = `SELECT TOP(1) m.descripcion, m.porcentaje, m.base, m.retenido, m.ciudad_pago, m.ciudad_expedido, m.indicador_impuesto, m.fecha_expedicion
-FROM wa_mov_financiero m JOIN wa_usuarios u ON m.nit = u.nit 
-WHERE m.nit=@nit and m.periodo=@periodo and m.year =@year and m.concepto =@conceptoBD and u.id=@userId ORDER BY m.fecha_creacion DESC;`//SQLScripts.scriptGetUserBasicInfo;
+    const SQLscriptGetUserBasicInfo = SQLScripts.scriptGetCertificateInfo//SQLScripts.scriptGetUserBasicInfo;
 
     const queryInputs = [
         {
@@ -69,6 +67,9 @@ WHERE m.nit=@nit and m.periodo=@periodo and m.year =@year and m.concepto =@conce
 
         return res.status(400).json(ERROR_MESSAGES['Bad Request'])
     }
+    console.log(SQLscriptGetUserBasicInfo);
+    console.log(queryInputs);
+
 
     dbDefaultQuery.dbDefaultQuery(SQLscriptGetUserBasicInfo, queryInputs, callBackFunctionGetCertificateInfo, res);
 

@@ -1,5 +1,5 @@
 module.exports = {
-    scriptVerifyUserPassword: "SELECT id, nit, nombres, correo, celular, perfil, clave FROM wa_usuarios WHERE correo = @correo and estado = 'A'",
+    scriptVerifyUserPassword: "SELECT id, nit, nombres, correo, celular, perfil, clave FROM wa_usuarios WHERE (correo = @correo or nit = @correo) and estado = 'A'",
     scriptVerifyMailNotRegistered: "SELECT id FROM wa_usuarios WHERE correo = @correo",
     scriptInsertNewUser: "INSERT INTO wa_usuarios (nit, nombres, correo, celular, fecha_creacion, estado, perfil, clave) OUTPUT INSERTED.id VALUES (@nit, @nombre, @correo, @celular, GETDATE(), 'I', '0', @clave);",
     scriptGetUserBasicInfo: "select id, nit, nombres, correo, celular, perfil from wa_usuarios where id = @userId ;",
@@ -46,5 +46,47 @@ module.exports = {
             FETCH NEXT @quantity_per_page ROWS ONLY ;
         `,
     scriptGetTotalNumberOfUsersFiltered: "SELECT COUNT(*) AS cantidad_usuarios FROM wa_usuarios WHERE estado = @user_state;",
-    scriptGetPerfilOfUser: `SELECT perfil FROM wa_usuarios WHERE id= @userId`
+    scriptGetPerfilOfUser: `SELECT perfil FROM wa_usuarios WHERE id= @userId`,
+    scriptGetCertificateInfo: `
+        SELECT 
+            m.descripcion,
+            m.porcentaje, 
+            m.base, 
+            m.iva,
+            m.retenido, 
+            m.ciudad_pago, 
+            m.ciudad_expedido, 
+            m.indicador_impuesto, 
+            m.fecha_expedicion
+        FROM 
+            (SELECT DISTINCT porcentaje FROM wa_mov_financiero WHERE nit = @nit AND periodo = @periodo AND year = @year AND concepto = @conceptoBD) AS p
+        OUTER APPLY (
+            SELECT TOP 1 
+                m.descripcion, 
+                m.base, 
+                m.iva,
+                m.retenido, 
+                m.ciudad_pago, 
+                m.ciudad_expedido, 
+                m.indicador_impuesto, 
+                m.fecha_expedicion, 
+                m.porcentaje
+            FROM 
+                wa_mov_financiero m 
+            JOIN 
+                wa_usuarios u ON m.nit = u.nit 
+            WHERE 
+                m.porcentaje = p.porcentaje 
+                AND m.nit = @nit 
+                AND m.periodo = @periodo 
+                AND m.year = @year 
+                AND m.concepto = @conceptoBD 
+                AND u.id = @userId
+            ORDER BY 
+                m.fecha_creacion DESC
+        ) AS m;
+    `,
+    typeNameTempTableDeleteWaMovFinanciero: 'dbo.wa_criterios_delete_mov_financiero',
+    procedureNameDeleteWaMovFinanciero: 'deleteValuesToUploadMovFinanciero',
+    tableNameToUploadMovFinanciero: 'wa_mov_financiero'
 }

@@ -17,7 +17,7 @@ module.exports.userLogin = (req, res) => {
 
     function validateParams(email, pass) {
         if (email && pass &&
-            stringValidator.validateMail(email) &&
+            (stringValidator.validateMail(email) || stringValidator.validateLength(email, 4, 50)) &&
             stringValidator.validateLength(pass, 1, 80) &&
             stringValidator.validatePassword(pass)) {
             getUserId()

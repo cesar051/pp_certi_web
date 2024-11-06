@@ -76,6 +76,11 @@ const requiredColumnsUploadIVA = {
         type: "NUMERIC",
         length: [14, 2]
     },
+    "iva": {
+        null: true,
+        type: "NUMERIC",
+        length: [14, 2]
+    },
     "retenido": {
         null: false,
         type: "NUMERIC",

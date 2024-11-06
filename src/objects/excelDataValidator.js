@@ -36,8 +36,9 @@ function ExcelDataValidator(jsonData, requiredColumns) {
     for (let row of jsonData) {
         for (let [key, type] of Object.entries(requiredColumns)) {
             const value = row[key];
+            console.log(`${value} length: ${type.length} canBenull ${type.canBeNull} ${type.null}`);
 
-            if (!rowValidator[type.type](value, type.length, type.canBeNull)) {
+            if (!rowValidator[type.type](value, type.length, type.null)) {
                 console.log(key, type);
 
                 console.log(row);
